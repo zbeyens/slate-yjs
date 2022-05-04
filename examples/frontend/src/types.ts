@@ -1,6 +1,7 @@
 import { CursorEditor, YHistoryEditor, YjsEditor } from '@slate-yjs/core';
 import { Descendant } from 'slate';
 import { ReactEditor } from 'slate-react';
+import { HocuspocusProvider } from '@hocuspocus/provider';
 
 export type CursorData = {
   name: string;
@@ -47,10 +48,21 @@ export type CustomElement =
   | HeadingTwo
   | BlockQuote;
 
+export interface CollaborationEditor {
+  yjs: {
+    isOnline?: boolean;
+    isSynced?: boolean;
+    start: () => void;
+    stop: () => void;
+    provider: HocuspocusProvider;
+  };
+}
+
 export type CustomEditor = ReactEditor &
   YjsEditor &
   YHistoryEditor &
-  CursorEditor<CursorData>;
+  CursorEditor<CursorData> &
+  CollaborationEditor;
 
 declare module 'slate' {
   interface CustomTypes {
