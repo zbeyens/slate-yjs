@@ -121,22 +121,18 @@ export const createYjsPlugin = createPluginFactory({
 
     return {
       useHooks: () => {
-        // Disconnect YjsEditor on unmount in order to free up resources
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        useEffect(
-          () => () => {
-            YjsEditor.disconnect(editor);
-          },
+        // // Connect editor and provider in useEffect to comply with concurrent mode
+        // // requirements.
+        useEffect(() => {
+          editor.yjs.provider.connect();
+          return () => editor.yjs.provider.disconnect();
           // eslint-disable-next-line react-hooks/exhaustive-deps
-          [editor]
-        );
-        useEffect(
-          () => () => {
-            editor.yjs.provider.disconnect();
-          },
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-          [editor.yjs.provider]
-        );
+        }, [editor.yjs.provider]);
+
+        useEffect(() => {
+          YjsEditor.connect(editor);
+          return () => YjsEditor.disconnect(editor);
+        }, []);
 
         // useEffect(() => {
         //   if (!editor.yjs.isOnline) {
